@@ -1,338 +1,374 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
+import { ArrowRight, Star, Leaf, Heart, Sparkles, TreePine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { NavigationBar } from "@/components/navigation-bar"
-import { ProductCard } from "@/components/product-card"
-import { useStore, type Product } from "@/lib/store-context"
-import { Star, Leaf, Shield, Truck, Award, Users, Sparkles, ArrowRight, Heart, Gift } from "lucide-react"
-
-// Mock featured products
-const featuredProducts: Product[] = [
-  {
-    id: "1",
-    name: "Zen Master OG",
-    price: 45.99,
-    originalPrice: 55.99,
-    image: "/placeholder-defpf.png",
-    category: "flower",
-    description: "Premium indica strain for deep relaxation and zen meditation",
-    thc: "24%",
-    cbd: "2%",
-    effects: ["Relaxed", "Happy", "Sleepy"],
-    flavors: ["Earthy", "Pine", "Sweet"],
-    inStock: true,
-    stockCount: 15,
-    rating: 4.8,
-    reviewCount: 124,
-    isNew: false,
-    isFeatured: true,
-    slug: "zen-master-og",
-  },
-  {
-    id: "2",
-    name: "Panda's Dream",
-    price: 38.99,
-    originalPrice: 42.99,
-    image: "/placeholder-gummies.png",
-    category: "edibles",
-    description: "Delicious gummies infused with peaceful vibes",
-    thc: "10mg",
-    cbd: "5mg",
-    effects: ["Euphoric", "Creative", "Focused"],
-    flavors: ["Berry", "Tropical", "Citrus"],
-    inStock: true,
-    stockCount: 28,
-    rating: 4.9,
-    reviewCount: 89,
-    isNew: true,
-    isFeatured: true,
-    slug: "pandas-dream",
-  },
-  {
-    id: "3",
-    name: "Bamboo Bliss",
-    price: 52.99,
-    image: "/placeholder-flower1.png",
-    category: "concentrates",
-    description: "Pure concentrate for the ultimate zen experience",
-    thc: "85%",
-    cbd: "1%",
-    effects: ["Uplifted", "Energetic", "Creative"],
-    flavors: ["Citrus", "Diesel", "Herbal"],
-    inStock: true,
-    stockCount: 8,
-    rating: 4.7,
-    reviewCount: 67,
-    isNew: false,
-    isFeatured: true,
-    slug: "bamboo-bliss",
-  },
-  {
-    id: "4",
-    name: "Peaceful Panda Pre-Roll",
-    price: 15.99,
-    originalPrice: 18.99,
-    image: "/placeholder-papers.png",
-    category: "pre-rolls",
-    description: "Ready-to-enjoy pre-rolls for instant zen",
-    thc: "20%",
-    cbd: "3%",
-    effects: ["Relaxed", "Happy", "Calm"],
-    flavors: ["Floral", "Sweet", "Earthy"],
-    inStock: true,
-    stockCount: 42,
-    rating: 4.6,
-    reviewCount: 156,
-    isNew: false,
-    isFeatured: true,
-    slug: "peaceful-panda-preroll",
-  },
-]
-
-// Mock testimonials
-const testimonials = [
-  {
-    id: 1,
-    name: "Sarah Chen",
-    avatar: "/placeholder-team1.png",
-    rating: 5,
-    text: "Zen Panda has completely transformed my wellness routine. The quality is unmatched and the zen vibes are real! 🐼",
-    product: "Zen Master OG",
-  },
-  {
-    id: 2,
-    name: "Mike Rodriguez",
-    avatar: "/placeholder-team2.png",
-    rating: 5,
-    text: "Fast delivery, amazing products, and the customer service is top-notch. This panda knows what they're doing!",
-    product: "Panda's Dream",
-  },
-  {
-    id: 3,
-    name: "Emma Thompson",
-    avatar: "/placeholder-team3.png",
-    rating: 5,
-    text: "The lab testing and quality assurance gives me complete peace of mind. Plus, who doesn't love pandas? 🌿",
-    product: "Bamboo Bliss",
-  },
-]
+import Image from "next/image"
+import Link from "next/link"
 
 export default function HomePage() {
-  const { setProducts } = useStore()
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [floatingLeaves, setFloatingLeaves] = useState<
+    Array<{ id: number; x: number; y: number; delay: number; size: number; type: "cannabis" | "bamboo" }>
+  >([])
 
-  // Set featured products in store
-  useEffect(() => {
-    setProducts(featuredProducts)
-  }, [setProducts])
+  const [bambooStems, setBambooStems] = useState<Array<{ id: number; x: number; height: number; delay: number }>>([])
 
-  // Auto-rotate testimonials
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
-    return () => clearInterval(interval)
+    // Create floating cannabis and bamboo leaves
+    const leaves = Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 6,
+      size: Math.random() * 0.4 + 0.6,
+      type: Math.random() > 0.6 ? "cannabis" : ("bamboo" as "cannabis" | "bamboo"),
+    }))
+    setFloatingLeaves(leaves)
+
+    // Create bamboo stems
+    const stems = Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      height: Math.random() * 40 + 60,
+      delay: Math.random() * 3,
+    }))
+    setBambooStems(stems)
   }, [])
 
+  const featuredProducts = [
+    {
+      id: 1,
+      name: "Panda's Choice",
+      price: 29.99,
+      image: "/placeholder-defpf.png",
+      badge: "Bestseller",
+      rating: 4.9,
+      description: "Our signature blend, loved by pandas everywhere",
+    },
+    {
+      id: 2,
+      name: "Bamboo Bliss",
+      price: 39.99,
+      image: "/placeholder-flower1.png",
+      badge: "Premium",
+      rating: 4.8,
+      description: "Pure zen in every puff",
+    },
+    {
+      id: 3,
+      name: "Panda Munchies",
+      price: 24.99,
+      image: "/placeholder-gummies.png",
+      badge: "Fan Favorite",
+      rating: 4.9,
+      description: "Sweet treats for the sweetest pandas",
+    },
+  ]
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
-      <NavigationBar />
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 text-gray-900 relative overflow-hidden">
+      {/* Bamboo Forest Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {bambooStems.map((stem) => (
+          <div
+            key={stem.id}
+            className="absolute bottom-0 opacity-10"
+            style={{
+              left: `${stem.x}%`,
+              height: `${stem.height}%`,
+              animationDelay: `${stem.delay}s`,
+              animation: `sway 8s ease-in-out infinite ${stem.delay}s`,
+            }}
+          >
+            {/* Bamboo Stem */}
+            <div className="w-6 h-full bg-gradient-to-t from-green-800 to-green-600 rounded-t-full relative">
+              {/* Bamboo Nodes */}
+              <div
+                className="absolute w-8 h-2 bg-green-700 rounded-full left-1/2 transform -translate-x-1/2"
+                style={{ top: "20%" }}
+              ></div>
+              <div
+                className="absolute w-8 h-2 bg-green-700 rounded-full left-1/2 transform -translate-x-1/2"
+                style={{ top: "40%" }}
+              ></div>
+              <div
+                className="absolute w-8 h-2 bg-green-700 rounded-full left-1/2 transform -translate-x-1/2"
+                style={{ top: "60%" }}
+              ></div>
+              <div
+                className="absolute w-8 h-2 bg-green-700 rounded-full left-1/2 transform -translate-x-1/2"
+                style={{ top: "80%" }}
+              ></div>
+
+              {/* Bamboo Leaves at top */}
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="flex space-x-1">
+                  <div className="w-8 h-16 bg-green-500 rounded-full transform rotate-12 opacity-80"></div>
+                  <div className="w-6 h-12 bg-green-600 rounded-full transform -rotate-12 opacity-80"></div>
+                  <div className="w-7 h-14 bg-green-500 rounded-full transform rotate-6 opacity-80"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Floating Cannabis and Bamboo Leaves */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {floatingLeaves.map((leaf) => (
+          <div
+            key={leaf.id}
+            className="absolute opacity-15"
+            style={{
+              left: `${leaf.x}%`,
+              top: `${leaf.y}%`,
+              transform: `scale(${leaf.size})`,
+              animationDelay: `${leaf.delay}s`,
+              animation: `float 10s ease-in-out infinite ${leaf.delay}s, rotate 15s linear infinite`,
+            }}
+          >
+            {leaf.type === "cannabis" ? (
+              // Cannabis Leaf SVG
+              <svg className="h-8 w-8 text-green-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C12 2 8 6 8 10C8 12 9 13 10 13C10 13 11 12 12 12C13 12 14 13 14 13C15 13 16 12 16 10C16 6 12 2 12 2Z" />
+                <path d="M12 12C12 12 6 8 4 10C3 11 3 12 4 13C4 13 5 13 6 12C7 11 8 11 8 11C8 11 9 12 10 13C11 14 12 12 12 12Z" />
+                <path d="M12 12C12 12 18 8 20 10C21 11 21 12 20 13C20 13 19 13 18 12C17 11 16 11 16 11C16 11 15 12 14 13C13 14 12 12 12 12Z" />
+                <path d="M12 12C12 12 8 18 10 20C11 21 12 21 13 20C13 20 13 19 12 18C11 17 11 16 11 16C11 16 12 15 13 14C14 13 12 12 12 12Z" />
+                <path d="M12 12C12 12 16 18 14 20C13 21 12 21 11 20C11 20 11 19 12 18C13 17 13 16 13 16C13 16 12 15 11 14C10 13 12 12 12 12Z" />
+                <path d="M12 12L12 22" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            ) : (
+              // Bamboo Leaf
+              <div className="w-8 h-16 bg-green-600 rounded-full transform rotate-12"></div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Cannabis Pattern Background */}
+      <div className="fixed inset-0 opacity-5 z-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23166534' fillOpacity='0.1'%3E%3Cpath d='M30 30c0-2.5-2-4.5-4.5-4.5S21 27.5 21 30s2 4.5 4.5 4.5S30 32.5 30 30zm-9 0c0-1.4 1.1-2.5 2.5-2.5S26 28.6 26 30s-1.1 2.5-2.5 2.5S21 31.4 21 30z'/%3E%3Cpath d='M25.5 25.5c1.4 0 2.5-1.1 2.5-2.5s-1.1-2.5-2.5-2.5S23 21.6 23 23s1.1 2.5 2.5 2.5zm0 10c1.4 0 2.5-1.1 2.5-2.5s-1.1-2.5-2.5-2.5S23 31.6 23 33s1.1 2.5 2.5 2.5z'/%3E%3Cpath d='M30 25.5c0-1.4-1.1-2.5-2.5-2.5S25 24.1 25 25.5s1.1 2.5 2.5 2.5S30 26.9 30 25.5zm-10 0c0-1.4-1.1-2.5-2.5-2.5S15 24.1 15 25.5s1.1 2.5 2.5 2.5S20 26.9 20 25.5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat",
+          }}
+        ></div>
+      </div>
+
+      {/* Header */}
+      <header className="relative z-10 bg-white/80 backdrop-blur-sm border-b border-green-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              {/* Panda Logo */}
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center shadow-lg">
+                  <div className="text-white text-2xl">🐼</div>
+                </div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                  <Leaf className="h-3 w-3 text-white" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+                  GREEN PANDA
+                </h1>
+                <p className="text-xs text-gray-600 font-semibold tracking-wider">ZEN • NATURAL • PREMIUM QUALITY</p>
+              </div>
+            </div>
+
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/pro-store" className="text-gray-700 hover:text-green-600 font-semibold transition-colors">
+                Shop
+              </Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600 font-semibold transition-colors">
+                Our Story
+              </Link>
+              <Link href="/dashboard" className="text-gray-700 hover:text-green-600 font-semibold transition-colors">
+                Account
+              </Link>
+              <Link href="/login">
+                <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-full px-6">
+                  Join the Garden
+                </Button>
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600">
-        <div className="absolute inset-0 bg-black/20" />
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent('<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fillRule="evenodd"><g fill="#ffffff" fillOpacity="0.1"><circle cx="30" cy="30" r="2"/></g></g></svg>')}")`,
-          }}
-        />
-
-        <div className="relative container mx-auto px-4 py-24 lg:py-32">
+      <section className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white space-y-8">
-              <div className="space-y-4">
-                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                  🐼 Welcome to Zen Panda
+            <div className="space-y-8">
+              <div>
+                <Badge className="bg-green-100 text-green-800 border-green-200 px-4 py-2 text-sm font-semibold mb-6">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Premium Cannabis, Panda Approved
                 </Badge>
-                <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                  Find Your
-                  <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                    Inner Zen
-                  </span>
-                </h1>
-                <p className="text-xl lg:text-2xl text-green-100 leading-relaxed">
-                  Premium cannabis products curated for your wellness journey. Lab-tested, organic, and delivered with
-                  peaceful panda vibes.
-                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-white text-green-600 hover:bg-green-50 text-lg px-8 py-6">
-                  <Link href="/store">
-                    Explore Products
+              <h2 className="text-6xl md:text-7xl font-black tracking-tight leading-none">
+                <span className="text-gray-900">Welcome to</span>
+                <br />
+                <span className="bg-gradient-to-r from-green-500 to-green-700 bg-clip-text text-transparent">
+                  Panda Paradise
+                </span>
+              </h2>
+
+              <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
+                Discover our zen garden of premium cannabis products. Carefully curated with love, naturally grown, and
+                panda-tested for the ultimate chill experience.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <Link href="/pro-store">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-full px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <TreePine className="mr-2 h-5 w-5" />
+                    Explore the Garden
                     <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:text-green-600 text-lg px-8 py-6 bg-transparent"
-                >
-                  <Link href="/about">Learn More</Link>
-                </Button>
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-green-500 text-green-700 hover:bg-green-50 font-semibold rounded-full px-8 py-4 text-lg bg-transparent"
+                  >
+                    <Heart className="mr-2 h-4 w-4" />
+                    Our Story
+                  </Button>
+                </Link>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="flex flex-wrap gap-6 pt-8">
-                <div className="flex items-center gap-2 text-green-100">
-                  <Shield className="h-5 w-5" />
-                  <span className="text-sm font-medium">Lab Tested</span>
+              <div className="flex items-center space-x-6 pt-4">
+                <div className="flex items-center space-x-2">
+                  <div className="flex -space-x-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">4.9/5 from happy pandas</span>
                 </div>
-                <div className="flex items-center gap-2 text-green-100">
-                  <Leaf className="h-5 w-5" />
-                  <span className="text-sm font-medium">100% Organic</span>
-                </div>
-                <div className="flex items-center gap-2 text-green-100">
-                  <Truck className="h-5 w-5" />
-                  <span className="text-sm font-medium">Fast Delivery</span>
-                </div>
-                <div className="flex items-center gap-2 text-green-100">
-                  <Award className="h-5 w-5" />
-                  <span className="text-sm font-medium">Premium Quality</span>
+                <div className="flex items-center space-x-2">
+                  <Leaf className="h-4 w-4 text-green-500" />
+                  <span className="text-sm font-semibold text-gray-700">100% Natural</span>
                 </div>
               </div>
             </div>
 
             <div className="relative">
-              <div className="relative z-10">
-                <Image
-                  src="/placeholder-defpf.png"
-                  alt="Zen Panda Hero"
-                  width={500}
-                  height={600}
-                  className="rounded-2xl shadow-2xl"
-                />
+              <div className="relative h-96 lg:h-[500px] bg-gradient-to-br from-green-100 to-green-200 rounded-3xl overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-green-600/10"></div>
+
+                {/* Panda Illustration with Cannabis Elements */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center space-y-4 relative">
+                    <div className="text-8xl">🐼</div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="text-2xl">🌿</div>
+                      <div className="text-2xl">🎋</div>
+                      <div className="text-2xl">🌿</div>
+                    </div>
+                    <p className="text-green-700 font-semibold">Zen Panda Vibes</p>
+
+                    {/* Floating cannabis leaves around panda */}
+                    <div className="absolute -top-8 -left-8 text-green-500 opacity-60 animate-pulse">🌿</div>
+                    <div
+                      className="absolute -top-4 -right-8 text-green-600 opacity-60 animate-pulse"
+                      style={{ animationDelay: "1s" }}
+                    >
+                      🌿
+                    </div>
+                    <div
+                      className="absolute -bottom-4 -left-6 text-green-500 opacity-60 animate-pulse"
+                      style={{ animationDelay: "2s" }}
+                    >
+                      🌿
+                    </div>
+                    <div
+                      className="absolute -bottom-8 -right-4 text-green-600 opacity-60 animate-pulse"
+                      style={{ animationDelay: "0.5s" }}
+                    >
+                      🌿
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
+                  <div className="flex items-center space-x-2">
+                    <Leaf className="h-4 w-4 text-green-500" />
+                    <span className="text-sm font-semibold text-gray-700">Lab Tested</span>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
+                  <div className="flex items-center space-x-2">
+                    <Heart className="h-4 w-4 text-pink-500" />
+                    <span className="text-sm font-semibold text-gray-700">Made with Love</span>
+                  </div>
+                </div>
               </div>
-              <div className="absolute -top-4 -right-4 w-full h-full bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl opacity-20 blur-xl" />
-              <div className="absolute -bottom-4 -left-4 w-full h-full bg-gradient-to-tr from-green-400 to-emerald-400 rounded-2xl opacity-20 blur-xl" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Products */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="relative z-10 py-20 bg-white/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="bg-green-100 text-green-700 mb-4">
-              <Sparkles className="mr-2 h-4 w-4" />
-              Featured Products
-            </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Curated for Your
-              <span className="block text-green-600">Zen Journey</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover our hand-picked selection of premium cannabis products, each chosen for quality, potency, and the
-              perfect zen experience.
+            <h3 className="text-4xl font-black mb-4 text-gray-900">Panda's Favorites</h3>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Our most beloved products, carefully selected by our panda experts for the ultimate zen experience.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-white">
-              <Link href="/store">
-                View All Products
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-20 bg-gradient-to-r from-green-50 to-emerald-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Why Choose
-              <span className="block text-green-600">Zen Panda?</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're not just another cannabis retailer. We're your partners in wellness, committed to quality,
-              transparency, and your zen journey.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Shield,
-                title: "Lab Tested Quality",
-                description: "Every product is rigorously tested for purity, potency, and safety by third-party labs.",
-                color: "text-blue-600",
-                bgColor: "bg-blue-100",
-              },
-              {
-                icon: Leaf,
-                title: "100% Organic",
-                description: "Sustainably grown, pesticide-free cannabis products that respect nature and your body.",
-                color: "text-green-600",
-                bgColor: "bg-green-100",
-              },
-              {
-                icon: Truck,
-                title: "Fast & Discreet",
-                description: "Quick, secure delivery in unmarked packages. Your privacy is our priority.",
-                color: "text-purple-600",
-                bgColor: "bg-purple-100",
-              },
-              {
-                icon: Users,
-                title: "Expert Support",
-                description: "Our knowledgeable team is here to guide you to the perfect products for your needs.",
-                color: "text-orange-600",
-                bgColor: "bg-orange-100",
-              },
-              {
-                icon: Award,
-                title: "Premium Selection",
-                description: "Carefully curated products from trusted growers and manufacturers.",
-                color: "text-red-600",
-                bgColor: "bg-red-100",
-              },
-              {
-                icon: Heart,
-                title: "Community Focused",
-                description: "Supporting local communities and promoting responsible cannabis use.",
-                color: "text-pink-600",
-                bgColor: "bg-pink-100",
-              },
-            ].map((feature, index) => (
               <Card
-                key={index}
-                className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm"
+                key={product.id}
+                className="group bg-white border-green-200 hover:border-green-400 transition-all duration-300 hover:shadow-xl hover:shadow-green-100 rounded-2xl overflow-hidden"
               >
-                <CardContent className="p-8 text-center">
-                  <div
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${feature.bgColor} mb-6 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <feature.icon className={`h-8 w-8 ${feature.color}`} />
+                <CardContent className="p-0">
+                  <div className="relative aspect-square bg-gradient-to-br from-green-50 to-green-100 overflow-hidden">
+                    <Image
+                      src={product.image || "/placeholder.svg"}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-6 group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <Badge className="absolute top-4 left-4 bg-green-500 text-white font-semibold">
+                      {product.badge}
+                    </Badge>
+                    <div className="absolute top-4 right-4 text-2xl">🐼</div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
+                        {product.name}
+                      </h4>
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                        <span className="text-yellow-600 font-semibold">{product.rating}</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-4">{product.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-green-600">${product.price}</span>
+                      <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-full">
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -340,217 +376,101 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      {/* Zen Values */}
+      <section className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="bg-green-100 text-green-700 mb-4">
-              <Star className="mr-2 h-4 w-4" />
-              Customer Love
-            </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              What Our Zen
-              <span className="block text-green-600">Community Says</span>
-            </h2>
+            <h3 className="text-4xl font-black mb-4 text-gray-900">The Panda Way</h3>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Our philosophy is simple: natural, peaceful, and always with a smile.
+            </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-green-50">
-              <CardContent className="p-12">
-                <div className="text-center">
-                  <div className="flex justify-center mb-6">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <blockquote className="text-2xl lg:text-3xl font-medium text-gray-900 mb-8 leading-relaxed">
-                    "{testimonials[currentTestimonial].text}"
-                  </blockquote>
-                  <div className="flex items-center justify-center space-x-4">
-                    <Image
-                      src={testimonials[currentTestimonial].avatar || "/placeholder.svg"}
-                      alt={testimonials[currentTestimonial].name}
-                      width={60}
-                      height={60}
-                      className="rounded-full"
-                    />
-                    <div className="text-left">
-                      <div className="font-bold text-gray-900">{testimonials[currentTestimonial].name}</div>
-                      <div className="text-green-600 text-sm">
-                        Verified Purchase: {testimonials[currentTestimonial].product}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Testimonial Indicators */}
-            <div className="flex justify-center space-x-2 mt-8">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial ? "bg-green-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
-                  }`}
-                />
-              ))}
-            </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: "🌱",
+                title: "Natural & Pure",
+                description: "Like bamboo in the wild, our products are grown naturally without harmful chemicals.",
+              },
+              {
+                icon: "☯️",
+                title: "Zen Balance",
+                description: "Finding the perfect harmony between relaxation and clarity, just like a peaceful panda.",
+              },
+              {
+                icon: "💚",
+                title: "Made with Love",
+                description:
+                  "Every product is crafted with care and attention, spreading good vibes to all our panda friends.",
+              },
+            ].map((value, index) => (
+              <Card
+                key={index}
+                className="bg-white border-green-200 hover:border-green-400 transition-all duration-300 hover:shadow-lg rounded-2xl"
+              >
+                <CardContent className="p-8 text-center">
+                  <div className="text-6xl mb-6">{value.icon}</div>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-4">{value.title}</h4>
+                  <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10" />
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent('<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fillRule="evenodd"><g fill="#ffffff" fillOpacity="0.1"><circle cx="30" cy="30" r="2"/></g></g></svg>')}")`,
-          }}
-        />
-
-        <div className="relative container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-6xl mb-6">🐼</div>
-            <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6">Ready to Find Your Zen?</h2>
-            <p className="text-xl lg:text-2xl text-green-100 mb-12 leading-relaxed">
-              Join thousands of satisfied customers on their wellness journey. Premium cannabis products, delivered with
-              love and peaceful panda vibes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button asChild size="lg" className="bg-white text-green-600 hover:bg-green-50 text-lg px-12 py-6">
-                <Link href="/store">
-                  <Gift className="mr-2 h-5 w-5" />
-                  Shop Now
-                </Link>
-              </Button>
+      <section className="relative z-10 py-20 bg-gradient-to-r from-green-500 to-green-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="text-6xl mb-6">🐼🌿</div>
+          <h3 className="text-5xl font-black mb-6 text-white">
+            Ready to Join Our
+            <span className="block">Zen Garden?</span>
+          </h3>
+          <p className="text-xl text-green-100 mb-12 max-w-2xl mx-auto">
+            Discover the peaceful world of premium cannabis with your favorite panda friends. Natural products, zen
+            vibes, and endless good times await!
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <Link href="/pro-store">
               <Button
-                asChild
-                variant="outline"
                 size="lg"
-                className="border-white text-white hover:bg-white hover:text-green-600 text-lg px-12 py-6 bg-transparent"
+                className="bg-white text-green-600 hover:bg-green-50 font-bold px-12 py-4 text-xl rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <Link href="/login">
-                  <Users className="mr-2 h-5 w-5" />
-                  Join Community
-                </Link>
+                <TreePine className="mr-3 h-6 w-6" />
+                Start Shopping
               </Button>
-            </div>
+            </Link>
+            <Link href="/login">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-2 border-white text-white hover:bg-white hover:text-green-600 font-bold px-12 py-4 text-xl rounded-full bg-transparent"
+              >
+                <Heart className="mr-3 h-6 w-6" />
+                Join the Family
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="text-2xl">🐼</div>
-                <span className="text-xl font-bold">Zen Panda</span>
-              </div>
-              <p className="text-gray-400">
-                Premium cannabis products for your wellness journey. Find your zen with quality you can trust.
-              </p>
-              <div className="flex space-x-4">
-                <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors cursor-pointer">
-                  <span className="text-sm">f</span>
-                </div>
-                <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors cursor-pointer">
-                  <span className="text-sm">t</span>
-                </div>
-                <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors cursor-pointer">
-                  <span className="text-sm">i</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Shop</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/store?category=flower" className="hover:text-white transition-colors">
-                    Flower
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/store?category=edibles" className="hover:text-white transition-colors">
-                    Edibles
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/store?category=concentrates" className="hover:text-white transition-colors">
-                    Concentrates
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/store?category=pre-rolls" className="hover:text-white transition-colors">
-                    Pre-Rolls
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/faq" className="hover:text-white transition-colors">
-                    FAQ
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className="hover:text-white transition-colors">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-white transition-colors">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/shipping" className="hover:text-white transition-colors">
-                    Shipping Info
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/privacy" className="hover:text-white transition-colors">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/terms" className="hover:text-white transition-colors">
-                    Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/age-verification" className="hover:text-white transition-colors">
-                    Age Verification
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/compliance" className="hover:text-white transition-colors">
-                    Compliance
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Zen Panda. All rights reserved. 🐼 Find your zen responsibly.</p>
-          </div>
-        </div>
-      </footer>
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        @keyframes rotate {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes sway {
+          0%, 100% { transform: translateX(0px) rotate(0deg); }
+          25% { transform: translateX(5px) rotate(2deg); }
+          75% { transform: translateX(-5px) rotate(-2deg); }
+        }
+      `}</style>
     </div>
   )
 }
