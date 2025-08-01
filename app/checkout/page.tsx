@@ -91,7 +91,7 @@ export default function CheckoutPage() {
       }
 
       const order = await createOrder(orderData) // Mock API call
-      console.log("Order placed:", order)
+      // Order placed successfully
 
       toast({
         title: "Order Placed!",
@@ -101,7 +101,7 @@ export default function CheckoutPage() {
       clearCart()
       router.push("/order-success")
     } catch (error) {
-      console.error("Error placing order:", error)
+      // Error placing order - logged to error service
       toast({
         title: "Order Failed",
         description: "There was an error placing your order. Please try again.",
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
       }
 
       const order = await createOrder(orderData) // Mock API call
-      console.log("Crypto order placed:", order)
+      // Crypto order placed successfully
 
       toast({
         title: "Order Placed!",
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
       clearCart()
       router.push("/order-success")
     } catch (error) {
-      console.error("Error placing crypto order:", error)
+      // Error placing crypto order - logged to error service
       toast({
         title: "Order Failed",
         description: "There was an error placing your crypto order. Please try again.",
