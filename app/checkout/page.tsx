@@ -14,8 +14,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { NavigationBar } from "@/components/navigation-bar"
 import { useStore } from "@/lib/store-context"
 import { useRouter } from "next/navigation"
-import { createOrder } from "@/lib/order-service" // Assuming this service exists
-import { toast } from "@/components/ui/use-toast"
+import { apiClient } from "@/lib/api-client"
+import { toast } from "@/hooks/use-toast"
 
 export default function CheckoutPage() {
   const { cart, cartTotal, user, clearCart } = useStore()
@@ -83,19 +83,31 @@ export default function CheckoutPage() {
     setIsProcessing(true)
     try {
       const orderData = {
-        userId: user.id,
-        items: cart,
-        total: cartTotal + 5, // Assuming $5 shipping
-        shippingAddress: shippingInfo,
+        items: cart.map(item => ({
+          productId: parseInt(item.productId),
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        shippingAddress: {
+          firstName: shippingInfo.fullName.split(' ')[0] || '',
+          lastName: shippingInfo.fullName.split(' ').slice(1).join(' ') || '',
+          email: user.email,
+          phone: '',
+          addressLine1: shippingInfo.address,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          postalCode: shippingInfo.zip,
+          country: shippingInfo.country,
+        },
         paymentMethod: paymentMethod,
       }
 
-      const order = await createOrder(orderData) // Mock API call
+      const order = await apiClient.createOrder(orderData)
       console.log("Order placed:", order)
 
       toast({
         title: "Order Placed!",
-        description: `Your order #${order.id} has been successfully placed.`,
+        description: `Your order #${order.orderNumber} has been successfully placed.`,
         variant: "default",
       })
       clearCart()
@@ -118,19 +130,31 @@ export default function CheckoutPage() {
     setIsProcessing(true)
     try {
       const orderData = {
-        userId: user.id,
-        items: cart,
-        total: cartTotal + 5, // Assuming $5 shipping
-        shippingAddress: shippingInfo,
+        items: cart.map(item => ({
+          productId: parseInt(item.productId),
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        shippingAddress: {
+          firstName: shippingInfo.fullName.split(' ')[0] || '',
+          lastName: shippingInfo.fullName.split(' ').slice(1).join(' ') || '',
+          email: user.email,
+          phone: '',
+          addressLine1: shippingInfo.address,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          postalCode: shippingInfo.zip,
+          country: shippingInfo.country,
+        },
         paymentMethod: "crypto",
       }
 
-      const order = await createOrder(orderData) // Mock API call
+      const order = await apiClient.createOrder(orderData)
       console.log("Crypto order placed:", order)
 
       toast({
         title: "Order Placed!",
-        description: `Your order #${order.id} has been successfully placed. Please complete the crypto payment.`,
+        description: `Your order #${order.orderNumber} has been successfully placed. Please complete the crypto payment.`,
         variant: "default",
       })
       clearCart()

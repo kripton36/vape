@@ -5,12 +5,15 @@ import { createContext, useContext, useReducer, useEffect, type ReactNode, useCa
 
 // Types
 export interface User {
-  id: string
+  id: number
   email: string
-  name: string
-  role: "user" | "admin"
-  points: number
-  walletBalance: number // Added walletBalance
+  firstName?: string
+  lastName?: string
+  name?: string
+  role?: "user" | "admin"
+  loyaltyPoints: number
+  walletBalance: number
+  isLoggedIn: boolean
   avatar?: string
 }
 
