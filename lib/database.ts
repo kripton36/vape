@@ -125,6 +125,58 @@ export const userQueries = {
       return newPoints
     })
   },
+
+  async updateProfile(userId: number, profileData: {
+    first_name?: string
+    last_name?: string
+    phone?: string
+    avatar?: string
+  }) {
+    const updates = []
+    const values = []
+    let paramCount = 0
+
+    if (profileData.first_name !== undefined) {
+      paramCount++
+      updates.push(`first_name = $${paramCount}`)
+      values.push(profileData.first_name)
+    }
+
+    if (profileData.last_name !== undefined) {
+      paramCount++
+      updates.push(`last_name = $${paramCount}`)
+      values.push(profileData.last_name)
+    }
+
+    if (profileData.phone !== undefined) {
+      paramCount++
+      updates.push(`phone = $${paramCount}`)
+      values.push(profileData.phone)
+    }
+
+    if (profileData.avatar !== undefined) {
+      paramCount++
+      updates.push(`avatar = $${paramCount}`)
+      values.push(profileData.avatar)
+    }
+
+    if (updates.length === 0) {
+      // No updates to make, return current user
+      return await this.findById(userId)
+    }
+
+    paramCount++
+    values.push(userId)
+
+    const { rows } = await query(
+      `UPDATE users SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $${paramCount} 
+       RETURNING id, email, first_name, last_name, phone, avatar, role, is_verified, kyc_status, loyalty_points, wallet_balance, created_at, updated_at`,
+      values
+    )
+
+    return rows[0]
+  },
 }
 
 // Product management functions

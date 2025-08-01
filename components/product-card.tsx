@@ -21,16 +21,22 @@ export function ProductCard({ product }: ProductCardProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
 
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    if (!product.inStock) return
+    
     setIsAdding(true)
-    setTimeout(() => {
+    try {
       addToCart(product)
-      setIsAdding(false)
       setIsAdded(true)
-      setTimeout(() => setIsAdded(false), 1500)
-    }, 1000)
+      setTimeout(() => setIsAdded(false), 2000)
+    } catch (error) {
+      console.error('Failed to add to cart:', error)
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,10 +75,11 @@ export function ProductCard({ product }: ProductCardProps) {
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/50 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-pink-500"
+          className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/50 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-200"
           onClick={handleWishlistToggle}
+          aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart className={cn("h-5 w-5", inWishlist && "fill-pink-500 text-pink-500")} />
+          <Heart className={cn("h-5 w-5 transition-colors", inWishlist && "fill-pink-500 text-pink-500")} />
         </Button>
 
         <CardContent className="p-6">

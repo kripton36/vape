@@ -6,7 +6,10 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "db:setup": "node scripts/setup-database.js",
+    "db:init": "psql -d greenpanda -f scripts/init-database.sql",
+    "db:reset": "dropdb --if-exists greenpanda && createdb greenpanda && npm run db:init"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

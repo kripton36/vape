@@ -24,7 +24,13 @@ export function NavigationBar() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isScrolled, setIsScrolled] = useState(false)
   const [notifications] = useState(3) // Mock notifications
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
+
+  // Fix hydration issues
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Handle scroll effect
   useEffect(() => {
@@ -118,9 +124,14 @@ export function NavigationBar() {
 
             {/* Wishlist */}
             <Link href="/wishlist">
-              <Button variant="ghost" size="sm" className="relative group">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative group"
+                aria-label={`Wishlist${isMounted && wishlistCount > 0 ? ` (${wishlistCount} items)` : ''}`}
+              >
                 <Heart className="h-5 w-5 group-hover:text-red-500 transition-colors" />
-                {wishlistCount > 0 && (
+                {isMounted && wishlistCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
                     {wishlistCount}
                   </Badge>
@@ -130,9 +141,14 @@ export function NavigationBar() {
 
             {/* Cart */}
             <Link href="/cart">
-              <Button variant="ghost" size="sm" className="relative group">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative group"
+                aria-label={`Shopping cart${isMounted && cartCount > 0 ? ` (${cartCount} items)` : ''}`}
+              >
                 <ShoppingCart className="h-5 w-5 group-hover:text-green-600 transition-colors" />
-                {cartCount > 0 && (
+                {isMounted && cartCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-green-600 text-white text-xs">
                     {cartCount}
                   </Badge>
