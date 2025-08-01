@@ -3,8 +3,6 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { LiveChat } from "@/components/live-chat"
-import { StoreProvider } from "@/lib/store-context"
-import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -12,7 +10,7 @@ export const metadata: Metadata = {
   title: "Green Panda - Premium Cannabis Products",
   description:
     "Discover zen with our premium cannabis collection. Organic, lab-tested products for your peaceful journey.",
-  generator: "v0.dev",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -23,11 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StoreProvider>
-          {children}
-          <LiveChat />
-          <Toaster />
-        </StoreProvider>
+        {children}
+        <LiveChat />
       </body>
     </html>
   )
