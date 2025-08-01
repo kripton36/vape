@@ -90,12 +90,12 @@ export default function LoginPage() {
             {isLogin ? (
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="panda@example.com" required />
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input id="login-email" name="email" type="email" placeholder="panda@example.com" required />
                 </div>
                 <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
+                  <Label htmlFor="login-password">Password</Label>
+                  <Input id="login-password" name="password" type="password" required />
                 </div>
                 <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
                   Sign In
@@ -112,12 +112,12 @@ export default function LoginPage() {
                   <Input id="lastName" type="text" placeholder="Panda" />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="panda@example.com" required />
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input id="signup-email" name="email" type="email" placeholder="panda@example.com" required />
                 </div>
                 <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
+                  <Label htmlFor="signup-password">Password</Label>
+                  <Input id="signup-password" name="password" type="password" required />
                 </div>
                 <div>
                   <Label htmlFor="dateOfBirth">Date of Birth</Label>

@@ -94,6 +94,7 @@ export function NavigationBar() {
               <Input
                 type="text"
                 placeholder="Search zen products..."
+                aria-label="Search products"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border-green-200 focus:border-green-400 focus:ring-green-400"
@@ -223,6 +224,7 @@ export function NavigationBar() {
                     <Input
                       type="text"
                       placeholder="Search zen products..."
+                      aria-label="Search products"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 border-green-200 focus:border-green-400"
