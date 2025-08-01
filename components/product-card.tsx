@@ -71,6 +71,7 @@ export function ProductCard({ product }: ProductCardProps) {
           variant="ghost"
           className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/50 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-pink-500"
           onClick={handleWishlistToggle}
+          aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
         >
           <Heart className={cn("h-5 w-5", inWishlist && "fill-pink-500 text-pink-500")} />
         </Button>
@@ -105,6 +106,7 @@ export function ProductCard({ product }: ProductCardProps) {
               )}
               onClick={handleAddToCart}
               disabled={isAdding || isAdded || !product.inStock}
+              aria-label={!product.inStock ? "Out of stock" : isAdded ? "Added to cart" : "Add to cart"}
             >
               {isAdding ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
