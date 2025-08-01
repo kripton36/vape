@@ -27,26 +27,15 @@ export const authService = {
   // Login user
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string } | { error: string }> {
     try {
-      // In a real app, this would validate against the database
-      // For now, we'll use mock data
-      if (credentials.email === "user@example.com" && credentials.password === "password") {
-        const user: User = {
-          id: 1,
-          email: credentials.email,
-          firstName: "Zen",
-          lastName: "Panda",
-          isLoggedIn: true,
-          loyaltyPoints: 250,
-          walletBalance: 50.0,
-        }
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      })
 
-        // Generate a mock token
-        const token = `mock-token-${Date.now()}`
-
-        return { user, token }
-      }
-
-      return { error: "Invalid email or password" }
+      return await res.json()
     } catch (error) {
       console.error("Login error:", error)
       return { error: "Login failed. Please try again." }
@@ -56,26 +45,21 @@ export const authService = {
   // Register user
   async register(data: RegisterData): Promise<{ user: User; token: string } | { error: string }> {
     try {
-      // In a real app, this would create a new user in the database
-      // For now, we'll just return a mock user
-      if (data.email === "user@example.com") {
-        return { error: "Email already in use" }
-      }
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          dateOfBirth: data.dateOfBirth,
+        }),
+      })
 
-      const user: User = {
-        id: Math.floor(Math.random() * 1000) + 2, // Random ID (not 1, which is our mock user)
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        isLoggedIn: true,
-        loyaltyPoints: 100, // Welcome bonus
-        walletBalance: 0,
-      }
-
-      // Generate a mock token
-      const token = `mock-token-${Date.now()}`
-
-      return { user, token }
+      return await res.json()
     } catch (error) {
       console.error("Registration error:", error)
       return { error: "Registration failed. Please try again." }
