@@ -7,6 +7,7 @@ export type AuthUser = {
   lastName?: string
   loyaltyPoints: number
   walletBalance: number
+  role?: string
 }
 
 export type LoginCredentials = {
@@ -19,84 +20,121 @@ export type RegisterData = {
   password: string
   firstName?: string
   lastName?: string
+  phone?: string
   dateOfBirth?: string
 }
 
-// Auth service
+// Auth service with real API integration
 export const authService = {
   // Login user
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string } | { error: string }> {
     try {
-      // In a real app, this would validate against the database
-      // For now, we'll use mock data
-      if (credentials.email === "user@example.com" && credentials.password === "password") {
-        const user: User = {
-          id: 1,
-          email: credentials.email,
-          firstName: "Zen",
-          lastName: "Panda",
-          isLoggedIn: true,
-          loyaltyPoints: 250,
-          walletBalance: 50.0,
-        }
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      })
 
-        // Generate a mock token
-        const token = `mock-token-${Date.now()}`
+      const data = await response.json()
 
-        return { user, token }
+      if (!response.ok) {
+        return { error: data.error || "Login failed" }
       }
 
-      return { error: "Invalid email or password" }
+      // Store token in localStorage
+      if (data.token) {
+        localStorage.setItem("auth_token", data.token)
+      }
+
+      return { user: data.user, token: data.token }
     } catch (error) {
       console.error("Login error:", error)
-      return { error: "Login failed. Please try again." }
+      return { error: "Network error. Please check your connection and try again." }
     }
   },
 
   // Register user
   async register(data: RegisterData): Promise<{ user: User; token: string } | { error: string }> {
     try {
-      // In a real app, this would create a new user in the database
-      // For now, we'll just return a mock user
-      if (data.email === "user@example.com") {
-        return { error: "Email already in use" }
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        return { error: result.error || "Registration failed" }
       }
 
-      const user: User = {
-        id: Math.floor(Math.random() * 1000) + 2, // Random ID (not 1, which is our mock user)
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        isLoggedIn: true,
-        loyaltyPoints: 100, // Welcome bonus
-        walletBalance: 0,
+      // Store token in localStorage
+      if (result.token) {
+        localStorage.setItem("auth_token", result.token)
       }
 
-      // Generate a mock token
-      const token = `mock-token-${Date.now()}`
-
-      return { user, token }
+      return { user: result.user, token: result.token }
     } catch (error) {
       console.error("Registration error:", error)
-      return { error: "Registration failed. Please try again." }
+      return { error: "Network error. Please check your connection and try again." }
+    }
+  },
+
+  // Logout user
+  async logout(): Promise<{ success: boolean; error?: string }> {
+    try {
+      const token = localStorage.getItem("auth_token")
+      
+      if (token) {
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+      }
+
+      // Clear local storage
+      localStorage.removeItem("auth_token")
+      
+      return { success: true }
+    } catch (error) {
+      console.error("Logout error:", error)
+      // Even if API call fails, clear local storage
+      localStorage.removeItem("auth_token")
+      return { success: true, error: "Logout completed locally" }
     }
   },
 
   // Get user profile
-  async getProfile(userId: number): Promise<AuthUser | null> {
+  async getProfile(): Promise<User | null> {
     try {
-      // In a real app, this would fetch from the database
-      if (userId === 1) {
-        return {
-          id: 1,
-          email: "user@example.com",
-          firstName: "Zen",
-          lastName: "Panda",
-          loyaltyPoints: 250,
-          walletBalance: 50.0,
+      const token = localStorage.getItem("auth_token")
+      if (!token) return null
+
+      const response = await fetch("/api/auth/profile", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Token is invalid, remove it
+          localStorage.removeItem("auth_token")
         }
+        return null
       }
-      return null
+
+      const data = await response.json()
+      return data.user
     } catch (error) {
       console.error("Get profile error:", error)
       return null
@@ -104,30 +142,83 @@ export const authService = {
   },
 
   // Update user profile
-  async updateProfile(userId: number, data: Partial<AuthUser>): Promise<AuthUser | null> {
+  async updateProfile(userData: Partial<AuthUser>): Promise<User | null> {
     try {
-      // In a real app, this would update the database
-      // For now, we'll just return the updated data
-      const user = await this.getProfile(userId)
-      if (!user) return null
+      const token = localStorage.getItem("auth_token")
+      if (!token) return null
 
-      const updatedUser = { ...user, ...data }
-      return updatedUser
+      const response = await fetch("/api/auth/profile", {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      })
+
+      if (!response.ok) {
+        return null
+      }
+
+      const data = await response.json()
+      return data.user
     } catch (error) {
       console.error("Update profile error:", error)
       return null
     }
   },
 
-  // Add loyalty points
-  async addLoyaltyPoints(userId: number, points: number): Promise<number | null> {
+  // Verify token
+  async verifyToken(): Promise<User | null> {
     try {
-      // In a real app, this would update the database
-      const user = await this.getProfile(userId)
-      if (!user) return null
+      const token = localStorage.getItem("auth_token")
+      if (!token) return null
 
-      const newPoints = user.loyaltyPoints + points
-      return newPoints
+      const response = await fetch("/api/auth/verify", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Token is invalid, remove it
+          localStorage.removeItem("auth_token")
+        }
+        return null
+      }
+
+      const data = await response.json()
+      return data.user
+    } catch (error) {
+      console.error("Token verification error:", error)
+      return null
+    }
+  },
+
+  // Add loyalty points
+  async addLoyaltyPoints(points: number): Promise<number | null> {
+    try {
+      const token = localStorage.getItem("auth_token")
+      if (!token) return null
+
+      const response = await fetch("/api/auth/loyalty-points", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ points }),
+      })
+
+      if (!response.ok) {
+        return null
+      }
+
+      const data = await response.json()
+      return data.newPoints
     } catch (error) {
       console.error("Add loyalty points error:", error)
       return null
@@ -135,17 +226,39 @@ export const authService = {
   },
 
   // Add to wallet balance
-  async addToWallet(userId: number, amount: number): Promise<number | null> {
+  async addToWallet(amount: number): Promise<number | null> {
     try {
-      // In a real app, this would update the database
-      const user = await this.getProfile(userId)
-      if (!user) return null
+      const token = localStorage.getItem("auth_token")
+      if (!token) return null
 
-      const newBalance = user.walletBalance + amount
-      return newBalance
+      const response = await fetch("/api/auth/wallet", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount }),
+      })
+
+      if (!response.ok) {
+        return null
+      }
+
+      const data = await response.json()
+      return data.newBalance
     } catch (error) {
       console.error("Add to wallet error:", error)
       return null
     }
+  },
+
+  // Get authentication token
+  getToken(): string | null {
+    return localStorage.getItem("auth_token")
+  },
+
+  // Check if user is authenticated
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem("auth_token")
   },
 }
