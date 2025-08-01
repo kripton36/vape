@@ -1,126 +1,144 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react" // Import useState
 
-import { useState } from "react"
+import { NavigationBar } from "@/components/navigation-bar"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import Link from "next/link"
+import { useStore } from "@/lib/store-context"
+import { authService } from "@/lib/auth-service" // Import authService
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const { setUser } = useStore()
+  const router = useRouter()
+  const [isLogin, setIsLogin] = useState(true) // State to toggle between login and signup
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsLoading(false)
+    setError(null) // Clear previous errors
+
+    const form = e.target as HTMLFormElement
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value
+
+    const result = await authService.login({ email, password })
+
+    if ("user" in result) {
+      setUser({
+        id: String(result.user.id),
+        name: `${result.user.firstName || ""} ${result.user.lastName || ""}`.trim(),
+        email: result.user.email,
+        role: "user", // Assuming default role
+        points: result.user.loyaltyPoints,
+      })
+      router.push("/dashboard")
+    } else {
+      setError(result.error)
+    }
+  }
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null) // Clear previous errors
+
+    const form = e.target as HTMLFormElement
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value
+    const firstName = (form.elements.namedItem("firstName") as HTMLInputElement)?.value || ""
+    const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)?.value || ""
+    const dateOfBirth = (form.elements.namedItem("dateOfBirth") as HTMLInputElement)?.value || ""
+
+    const result = await authService.register({ email, password, firstName, lastName, dateOfBirth })
+
+    if ("user" in result) {
+      setUser({
+        id: String(result.user.id),
+        name: `${result.user.firstName || ""} ${result.user.lastName || ""}`.trim(),
+        email: result.user.email,
+        role: "user", // Assuming default role
+        points: result.user.loyaltyPoints,
+      })
+      router.push("/dashboard")
+    } else {
+      setError(result.error)
+    }
   }
 
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-gradient-to-br from-green-50 via-white to-green-100">
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[380px] gap-6">
-          <div className="grid gap-2 text-center">
-            <Link href="/" className="flex items-center justify-center space-x-2 mb-4">
-              <div className="text-4xl">🐼</div>
-              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                GREEN PANDA
-              </h1>
-            </Link>
-            <p className="text-balance text-gray-600">
-              Welcome to the garden! Sign in or create an account to find your zen.
-            </p>
-          </div>
-
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-green-100/80">
-              <TabsTrigger
-                value="signin"
-                className="data-[state=active]:bg-green-500 data-[state=active]:text-white rounded-full"
-              >
-                Sign In
-              </TabsTrigger>
-              <TabsTrigger
-                value="signup"
-                className="data-[state=active]:bg-green-500 data-[state=active]:text-white rounded-full"
-              >
-                Sign Up
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="signin">
-              <form onSubmit={handleSubmit} className="grid gap-4 mt-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="panda@bamboo.com" required className="rounded-full" />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link href="#" className="ml-auto inline-block text-sm underline text-green-600">
-                      Forgot your password?
-                    </Link>
-                  </div>
-                  <Input id="password" type="password" required className="rounded-full" />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing In..." : "Sign In"}
-                </Button>
-                <Button variant="outline" className="w-full bg-transparent rounded-full border-gray-300">
-                  Sign in with Google
-                </Button>
-              </form>
-            </TabsContent>
-            <TabsContent value="signup">
-              <form onSubmit={handleSubmit} className="grid gap-4 mt-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="panda@bamboo.com"
-                    required
-                    className="rounded-full"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input id="signup-password" type="password" required className="rounded-full" />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating Account..." : "Create Account"}
-                </Button>
-                <div className="text-center text-xs text-gray-500">
-                  By creating an account, you agree to our{" "}
-                  <Link href="#" className="underline text-green-600">
-                    Terms of Service
-                  </Link>
-                </div>
-              </form>
-            </TabsContent>
-          </Tabs>
+    <div className="relative min-h-screen bg-gray-100">
+      <NavigationBar />
+      <main className="flex items-center justify-center min-h-screen pt-20">
+        <div className="absolute inset-0">
+          <Image src="/placeholder-login-hero.png" alt="Zen background" fill className="object-cover opacity-20" />
         </div>
-      </div>
-      <div className="hidden bg-green-100 lg:flex items-center justify-center p-8">
-        <Image
-          src="/placeholder-panda-login.png"
-          alt="Panda Login"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover rounded-2xl"
-        />
-      </div>
+        <Card className="w-full max-w-md mx-4 relative bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center">
+            <div className="text-5xl mb-2">🐼</div>
+            <CardTitle className="text-3xl font-bold">{isLogin ? "Welcome Back" : "Join the Zen Journey"}</CardTitle>
+            <CardDescription>
+              {isLogin ? "Sign in to continue your zen journey." : "Create an account to get started."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+            {isLogin ? (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" placeholder="panda@example.com" required />
+                </div>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" type="password" required />
+                </div>
+                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  Sign In
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input id="firstName" type="text" placeholder="Zen" />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input id="lastName" type="text" placeholder="Panda" />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" placeholder="panda@example.com" required />
+                </div>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" type="password" required />
+                </div>
+                <div>
+                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Input id="dateOfBirth" type="date" />
+                </div>
+                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  Sign Up
+                </Button>
+              </form>
+            )}
+            <div className="mt-4 text-center text-sm">
+              <p>
+                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                <a href="#" onClick={() => setIsLogin(!isLogin)} className="font-medium text-green-600 hover:underline">
+                  {isLogin ? "Sign up" : "Sign in"}
+                </a>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   )
 }
