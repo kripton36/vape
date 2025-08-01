@@ -6,7 +6,11 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "migrate": "node scripts/migrate.js",
+    "migrate:reset": "node scripts/migrate.js --reset",
+    "db:setup": "npm run migrate",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

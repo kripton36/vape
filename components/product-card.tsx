@@ -47,10 +47,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="overflow-hidden">
           <Image
             src={product.image || "/placeholder.svg"}
-            alt={product.name}
+            alt={`${product.name} - ${product.description}`}
             width={300}
             height={300}
             className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
 
@@ -71,6 +73,7 @@ export function ProductCard({ product }: ProductCardProps) {
           variant="ghost"
           className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/50 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-pink-500"
           onClick={handleWishlistToggle}
+          aria-label={inWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
         >
           <Heart className={cn("h-5 w-5", inWishlist && "fill-pink-500 text-pink-500")} />
         </Button>
@@ -105,16 +108,27 @@ export function ProductCard({ product }: ProductCardProps) {
               )}
               onClick={handleAddToCart}
               disabled={isAdding || isAdded || !product.inStock}
+              aria-label={
+                !product.inStock 
+                  ? `${product.name} is out of stock`
+                  : isAdded 
+                  ? `${product.name} added to cart`
+                  : `Add ${product.name} to cart for $${product.price.toFixed(2)}`
+              }
             >
               {isAdding ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                  <span className="sr-only">Adding to cart...</span>
+                </>
               ) : isAdded ? (
                 <>
-                  <Check className="mr-2 h-5 w-5" /> Added
+                  <Check className="mr-2 h-5 w-5" aria-hidden="true" /> Added
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="mr-2 h-5 w-5" /> Add
+                  <ShoppingCart className="mr-2 h-5 w-5" aria-hidden="true" /> 
+                  {!product.inStock ? "Out of Stock" : "Add"}
                 </>
               )}
             </Button>
