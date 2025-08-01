@@ -97,8 +97,9 @@ export function NavigationBar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border-green-200 focus:border-green-400 focus:ring-green-400"
+                aria-label="Search products"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
             </form>
           </div>
 
@@ -106,7 +107,7 @@ export function NavigationBar() {
           <div className="flex items-center space-x-4">
             {/* Notifications */}
             {user && (
-              <Button variant="ghost" size="sm" className="relative">
+              <Button variant="ghost" size="sm" className="relative" aria-label={`${notifications} notifications`}>
                 <Bell className="h-5 w-5" />
                 {notifications > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
@@ -118,7 +119,7 @@ export function NavigationBar() {
 
             {/* Wishlist */}
             <Link href="/wishlist">
-              <Button variant="ghost" size="sm" className="relative group">
+              <Button variant="ghost" size="sm" className="relative group" aria-label={`${wishlistCount} items in wishlist`}>
                 <Heart className="h-5 w-5 group-hover:text-red-500 transition-colors" />
                 {wishlistCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
@@ -130,7 +131,7 @@ export function NavigationBar() {
 
             {/* Cart */}
             <Link href="/cart">
-              <Button variant="ghost" size="sm" className="relative group">
+              <Button variant="ghost" size="sm" className="relative group" aria-label={`${cartCount} items in cart`}>
                 <ShoppingCart className="h-5 w-5 group-hover:text-green-600 transition-colors" />
                 {cartCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-green-600 text-white text-xs">
