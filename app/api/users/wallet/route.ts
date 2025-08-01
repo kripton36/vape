@@ -94,7 +94,9 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Wallet operation error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Wallet operation error:', error)
+    }
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
@@ -134,7 +136,9 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Get wallet transactions error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Get wallet transactions error:', error)
+    }
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
