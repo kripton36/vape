@@ -5,6 +5,7 @@ import "./globals.css"
 import { LiveChat } from "@/components/live-chat"
 import { StoreProvider } from "@/lib/store-context"
 import { Toaster } from "@/components/ui/toaster"
+import { ErrorBoundary } from "@/components/error-boundary"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,11 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StoreProvider>
-          {children}
-          <LiveChat />
-          <Toaster />
-        </StoreProvider>
+        <ErrorBoundary>
+          <StoreProvider>
+            {children}
+            <LiveChat />
+            <Toaster />
+          </StoreProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
