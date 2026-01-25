@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Package, ShoppingCart, Users, BarChart } from "lucide-react"
+import { Home, Package, ShoppingCart, Users, BarChart, Target } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function AdminSidebar() {
@@ -14,6 +14,7 @@ export function AdminSidebar() {
     { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
     { href: "/admin/customers", label: "Customers", icon: Users },
     { href: "/admin/analytics", label: "Analytics", icon: BarChart },
+    { href: "/admin/google-ads", label: "Google Ads", icon: Target },
   ]
 
   return (
